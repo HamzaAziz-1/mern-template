@@ -1,9 +1,18 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useGlobalContext } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+import Home from "./pages/Home";
 function App() {
+  const { isLoading } = useGlobalContext();
+
+  if (isLoading) {
+    return <div>Loading..</div>;
+  }
   return (
     <>
       <ToastContainer
@@ -20,6 +29,15 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/" element={ <Home/> } />
       </Routes>
     </>
   );
