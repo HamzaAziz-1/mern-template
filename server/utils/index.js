@@ -8,11 +8,10 @@ const createJWT = ({ payload }) => {
 
 const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
-const comparePassword = async function (canditatePassword,password) {
+const comparePassword = async function (canditatePassword, password) {
   const isMatch = await bcrypt.compare(canditatePassword, password);
   return isMatch;
 };
-
 
 const hashPassword = async function (password) {
   const salt = await bcrypt.genSalt(10);
@@ -21,18 +20,22 @@ const hashPassword = async function (password) {
 };
 
 const attachCookiesToResponse = ({ res, user }) => {
-    const token = createJWT({ payload: { user } });
-    const oneDay = 1000 * 60 * 60 * 24;
+  const token = createJWT({ payload: { user } });
+  const oneDay = 1000 * 60 * 60 * 24;
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      signed: true,
-      expires: new Date(Date.now() + oneDay),
-      sameSite: "none",
-    });
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    signed: true,
+    expires: new Date(Date.now() + oneDay),
+    sameSite: "none",
+  });
+};
 
-}
-
-
-module.exports = { comparePassword, hashPassword,createJWT,isTokenValid,attachCookiesToResponse };
+module.exports = {
+  comparePassword,
+  hashPassword,
+  createJWT,
+  isTokenValid,
+  attachCookiesToResponse,
+};
