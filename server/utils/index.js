@@ -8,8 +8,6 @@ const createJWT = ({ payload }) => {
 
 const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
-
-
 const comparePassword = async function (canditatePassword,password) {
   const isMatch = await bcrypt.compare(canditatePassword, password);
   return isMatch;

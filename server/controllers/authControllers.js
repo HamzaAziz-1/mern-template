@@ -2,8 +2,6 @@ const pool = require("../database/db");
 const {
   comparePassword,
   hashPassword,
-  createJWT,
-  isTokenValid,
   attachCookiesToResponse,
 } = require("../utils/index");
 
@@ -54,4 +52,11 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login, register };
+const logout = async(req,res)=>{
+res.cookie("token", "logout", {
+  httpOnly: true,
+  expires: new Date(Date.now()),
+});
+res.status(200).json({ message: "user logged out!" });
+}
+module.exports = { login, register,logout };
