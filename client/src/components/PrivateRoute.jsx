@@ -9,11 +9,6 @@ const PrivateRoute = ({ children, roles }) => {
     return <Navigate to="/" />;
   }
 
-  // Check if the user's role is included in the allowed roles
-  if (!roles.includes(user.role)) {
-    // Redirect to a forbidden or access-denied page
-    return <Navigate to="/" />;
-  }
 
   // Allow access to the route for authorized users
   return children;

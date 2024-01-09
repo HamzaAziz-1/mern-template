@@ -35,7 +35,7 @@ export default function Login() {
      try {
        const res = await axios.post(
          "http://localhost:8000/api/v1/auth/login",
-         values
+         values,{withCredentials:true}
        );
        toast.success("Logged In Successfully");
        navigate("/login");

@@ -28,7 +28,6 @@ const attachCookiesToResponse = ({ res, user }) => {
     secure: process.env.NODE_ENV === "production",
     signed: true,
     expires: new Date(Date.now() + oneDay),
-    sameSite: "none",
   });
 };
 

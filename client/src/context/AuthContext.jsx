@@ -24,9 +24,12 @@ const AppProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const { data } = await axios.get(`${BASE_URL}/users/showMe`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(
+        `http://localhost:8000/api/v1/users/showMe`,
+        {
+          withCredentials: true,
+        }
+      );
       saveUser(data.user);
     } catch (error) {
       removeUser();
@@ -48,7 +51,7 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-  }, [user]);
+  }, []);
 
   return (
     <AppContext.Provider
