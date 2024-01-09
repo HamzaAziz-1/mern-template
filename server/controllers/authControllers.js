@@ -9,6 +9,12 @@ const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hashedPassword = await hashPassword(password);
+     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+       email,
+     ]);
+     if(result.rows[0]){
+      return res.status(400).json({message:"Email already exists"})
+     }
     const newUser = await pool.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
       [name, email, hashedPassword]
