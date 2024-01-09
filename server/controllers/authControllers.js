@@ -1,22 +1,57 @@
-// controllers/usersController.js
-const express = require('express');
-const userModel = require('../models/users');
+const pool = require("../database/db");
+const {
+  comparePassword,
+  hashPassword,
+  createJWT,
+  isTokenValid,
+  attachCookiesToResponse,
+} = require("../utils/index");
+
+const register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const hashedPassword = await hashPassword(password);
+    const newUser = await pool.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
+      [name, email, hashedPassword]
+    );
+
+    res.json(newUser.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const login = async (req, res) => {
-    console.log(req.body);
-  const { username, email } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Validate input
-    if (!username || !email) {
-      throw new Error('Bad Request - Missing required fields');
+    if (!email || !password) {
+      throw new Error("Missing required fields");
     }
 
-    const createdUser = await userModel.createUser(username, email);
-    res.status(201).json(createdUser);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    if (result && result.rows.length > 0) {
+      const [user] = result.rows;
+      const isMatch = await comparePassword(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      attachCookiesToResponse({ res, user });
+
+      res.status(200).json({ message: "Logged In successfully!", user });
+    } else {
+      return res.status(400).json({ message: "User does not exist" });
+    }
   } catch (error) {
     console.error(error.message);
-    res.status(400).json({ error: error.message || 'Bad Request' });
+    res.status(500).json({ error: error.message || "Bad Request" });
   }
-}
+};
 
-module.exports = login;
+module.exports = { login, register };
