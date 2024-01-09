@@ -1,5 +1,5 @@
 const pool = require("../database/db");
-const {hashPassword,comparePassword} = require('../utils/index')
+const { hashPassword, comparePassword } = require("../utils/index");
 const getCurrentUser = async (req, res) => {
   try {
     const user = req.user;
@@ -49,7 +49,6 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
-
     const result = await pool.query(
       "DELETE FROM users WHERE _id = $1 RETURNING *",
       [id]
@@ -80,51 +79,48 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const updatePassword = async(req,res)=>{
-     const userId = req.user._id;
-     const { currentPassword, newPassword } = req.body;
+const updatePassword = async (req, res) => {
+  const userId = req.user._id;
+  const { currentPassword, newPassword } = req.body;
 
-     try {
-      
-       const result = await pool.query("SELECT * FROM users WHERE _id = $1", [
-         userId,
-       ]);
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE _id = $1", [
+      userId,
+    ]);
 
-       if (!result.rows[0]) {
-         return res
-           .status(400)
-           .json({ message: `User not found with id: ${userId}` });
-       }
+    if (!result.rows[0]) {
+      return res
+        .status(400)
+        .json({ message: `User not found with id: ${userId}` });
+    }
 
-       const user = result.rows[0];
+    const user = result.rows[0];
 
-       const isPasswordMatch = await comparePassword(
-         currentPassword,
-         user.password
-       );
+    const isPasswordMatch = await comparePassword(
+      currentPassword,
+      user.password
+    );
 
-       if (!isPasswordMatch) {
-         return res
-           .status(400)
-           .json({ message: "Current password is incorrect" });
-       }
+    if (!isPasswordMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
 
-       const hashedNewPassword = await hashPassword(newPassword);
-       const updateResult = await pool.query(
-         "UPDATE users SET password = $1 WHERE _id = $2 RETURNING *",
-         [hashedNewPassword, userId]
-       );
+    const hashedNewPassword = await hashPassword(newPassword);
+    const updateResult = await pool.query(
+      "UPDATE users SET password = $1 WHERE _id = $2 RETURNING *",
+      [hashedNewPassword, userId]
+    );
 
-       const updatedUser = updateResult.rows[0];
+    const updatedUser = updateResult.rows[0];
 
-       return res
-         .status(200)
-         .json({ user: updatedUser, message: "Password updated successfully" });
-     } catch (error) {
-       console.error(error);
-       return res.status(500).json({ message: "Internal server error" });
-     }
-}
+    return res
+      .status(200)
+      .json({ user: updatedUser, message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   getAllUsers,
