@@ -30,21 +30,53 @@ export default function Login() {
     email: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { ...errors };
+
+    // Validate email
+    if (!values.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    // Validate password
+    if (!values.password.trim()) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const res = await axios.post(`${BASE_URL}/auth/login`, values, {
-        withCredentials: true,
-      });
-      toast.success("Logged In Successfully");
-      dispatch(saveUser(res.data.user));
-      navigate("/dashboard");
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
+    if (validateForm()) {
+      try {
+        const res = await axios.post(`${BASE_URL}/auth/login`, values, {
+          withCredentials: true,
+        });
+        toast.success("Logged In Successfully");
+        dispatch(saveUser(res.data.user));
+        navigate("/dashboard");
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
+      }
     }
   };
 
@@ -82,6 +114,9 @@ export default function Login() {
               autoComplete="email"
               autoFocus
               onChange={handleChange}
+              value={values.email}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
             />
             <TextField
               margin="normal"
@@ -93,6 +128,9 @@ export default function Login() {
               id="password"
               autoComplete="current-password"
               onChange={handleChange}
+              value={values.password}
+              error={Boolean(errors.password)}
+              helperText={errors.password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

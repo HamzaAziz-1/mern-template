@@ -15,11 +15,18 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../utils/config";
+
 const defaultTheme = createTheme();
 
 export default function Register() {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
     name: "",
     email: "",
     password: "",
@@ -27,18 +34,50 @@ export default function Register() {
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" }); 
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { ...errors };
+
+    // Validate name
+    if (!values.name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+
+    // Validate email
+    if (!values.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    // Validate password
+    if (!values.password.trim()) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
+
+    if (validateForm()) {
+      try {
         const res = await axios.post(`${BASE_URL}/auth/register`, values);
-        toast.success('User registered successfully')
-        navigate('/login')
-    } catch (error) {
-        toast.error(error?.response?.data?.message)
+        toast.success("User registered successfully");
+        navigate("/login");
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
+      }
     }
-   
   };
 
   return (
@@ -76,6 +115,9 @@ export default function Register() {
                   label="Name"
                   autoFocus
                   onChange={handleChange}
+                  value={values.name}
+                  error={Boolean(errors.name)}
+                  helperText={errors.name}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -87,6 +129,9 @@ export default function Register() {
                   name="email"
                   autoComplete="email"
                   onChange={handleChange}
+                  value={values.email}
+                  error={Boolean(errors.email)}
+                  helperText={errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -99,6 +144,9 @@ export default function Register() {
                   id="password"
                   autoComplete="new-password"
                   onChange={handleChange}
+                  value={values.password}
+                  error={Boolean(errors.password)}
+                  helperText={errors.password}
                 />
               </Grid>
             </Grid>

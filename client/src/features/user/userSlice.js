@@ -1,6 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../utils/config";
+
+export const logoutUserAsync = createAsyncThunk(
+  "user/logoutUserAsync",
+  async (_, { dispatch }) => {
+    try {
+      await axios.delete(`${BASE_URL}/auth/logout`, {
+        withCredentials: true,
+      });
+      dispatch(updateUser(null));
+      toast.success("Logout Successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.msg);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {

@@ -6,14 +6,19 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { selectUser, logoutUser } from "../features/user/userSlice";
-import { useSelector } from "react-redux";
+import { selectUser, logoutUserAsync } from "../features/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+
 export default function NavBar() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logoutUserAsync());
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -37,8 +42,7 @@ export default function NavBar() {
             Home
           </Typography>
           {user ? (
-            <Button color="inherit" onClick={() => dispatch(logoutUser())}>
-              {" "}
+            <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
           ) : (
