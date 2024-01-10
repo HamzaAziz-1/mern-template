@@ -24,30 +24,29 @@ const defaultTheme = createTheme();
 
 export default function Login() {
   const dispatch = useDispatch();
-   const navigate = useNavigate();
-   const [values, setValues] = useState({
-     name: "",
-     email: "",
-   });
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+  });
 
-   const handleChange = (e) => {
-     setValues({ ...values, [e.target.name]: e.target.value });
-   };
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
-   const handleSubmit = async (event) => {
-     event.preventDefault();
-     try {
-       const res = await axios.post(
-         `${BASE_URL}/auth/login`,
-         values,{withCredentials:true}
-       );
-       toast.success("Logged In Successfully");
-       dispatch(saveUser(res.data.user));
-       navigate("/dashboard");
-     } catch (error) {
-       toast.error(error?.response?.data?.message);
-     }
-   };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const res = await axios.post(`${BASE_URL}/auth/login`, values, {
+        withCredentials: true,
+      });
+      toast.success("Logged In Successfully");
+      dispatch(saveUser(res.data.user));
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -108,7 +107,6 @@ export default function Login() {
               Sign In
             </Button>
             <Grid container>
-              
               <Grid item>
                 <Link href="/register" variant="body2">
                   {"Don't have an account? Sign Up"}

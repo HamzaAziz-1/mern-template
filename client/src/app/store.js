@@ -4,18 +4,18 @@ import storage from "redux-persist/lib/storage";
 import counterReducer from "../features/counter/counterSlice";
 import userReducer from "../features/user/userSlice";
 
-const persistConfig = {
-  key: "root",
-  storage,
-};
-const persistedReducer = persistReducer(persistConfig, userReducer);
+// const persistConfig = {
+//   key: "root",
+//   storage,
+// };
+// const persistedReducer = persistReducer(persistConfig, userReducer);
 
 const store = configureStore({
   reducer: {
     counter: counterReducer,
-    user: persistedReducer,
+    user: userReducer,
   },
 });
 
-const persistor = persistStore(store);
-export { store, persistor };
+// const persistor = persistStore(store);
+export default store;
