@@ -16,10 +16,13 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useGlobalContext } from "../context/AuthContext";
+import { BASE_URL } from "../utils/config";
 
 const defaultTheme = createTheme();
 
 export default function Login() {
+  const {saveUser} = useGlobalContext();
    const navigate = useNavigate();
    const [values, setValues] = useState({
      name: "",
@@ -34,11 +37,12 @@ export default function Login() {
      event.preventDefault();
      try {
        const res = await axios.post(
-         "http://localhost:8000/api/v1/auth/login",
+         `${BASE_URL}/auth/login`,
          values,{withCredentials:true}
        );
        toast.success("Logged In Successfully");
-       navigate("/login");
+       saveUser(res.data.user)
+       navigate("/dashboard");
      } catch (error) {
        toast.error(error?.response?.data?.message);
      }

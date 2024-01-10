@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../utils/config";
 const defaultTheme = createTheme();
 
 export default function Register() {
@@ -31,7 +32,7 @@ export default function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const res = await axios.post('http://localhost:8000/api/v1/auth/register',values)
+        const res = await axios.post(`${BASE_URL}/auth/register`, values);
         toast.success('User registered successfully')
         navigate('/login')
     } catch (error) {

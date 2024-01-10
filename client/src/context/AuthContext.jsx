@@ -4,18 +4,22 @@
 import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../utils/config";
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isUserFetched, setIsUserFetched] = useState(false);
 
   const saveUser = (userData) => {
     setUser(userData);
+    setIsUserFetched(true);
   };
 
   const removeUser = () => {
     setUser(null);
+    setIsUserFetched(true);
   };
 
   const updateUser = (newUser) => {
@@ -23,25 +27,22 @@ const AppProvider = ({ children }) => {
   };
 
   const fetchUser = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:8000/api/v1/users/showMe`,
-        {
+    if (!isUserFetched) {
+      try {
+        const { data } = await axios.get(`${BASE_URL}/users/showMe`, {
           withCredentials: true,
-        }
-      );
-      saveUser(data.user);
-    } catch (error) {
-      removeUser();
+        });
+        saveUser(data.user);
+      } catch (error) {
+        removeUser();
+      }
     }
     setIsLoading(false);
   };
 
   const logoutUser = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/auth/logout`, {
-        withCredentials: true,
-      });
+      await axios.delete(`${BASE_URL}/auth/logout`, { withCredentials: true });
       removeUser();
       toast.success("Logout Successfully");
     } catch (error) {
@@ -51,7 +52,7 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [isUserFetched]);
 
   return (
     <AppContext.Provider
