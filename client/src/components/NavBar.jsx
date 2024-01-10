@@ -6,11 +6,13 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useGlobalContext } from "../context/AuthContext";
+import { selectUser } from "../features/user/userSlice";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { useGlobalContext } from "../context/AuthContext";
 export default function NavBar() {
-  const { user, logoutUser } = useGlobalContext();
+  const { logoutUser } = useGlobalContext();
+    const user = useSelector(selectUser);
   const navigate = useNavigate();
   return (
     <Box sx={{ flexGrow: 1 }}>

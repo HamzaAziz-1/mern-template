@@ -16,13 +16,14 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
+import { useDispatch } from "react-redux";
+import { saveUser } from "../features/user/userSlice";
 
 const defaultTheme = createTheme();
 
 export default function Login() {
-  const {saveUser} = useGlobalContext();
+  const dispatch = useDispatch();
    const navigate = useNavigate();
    const [values, setValues] = useState({
      name: "",
@@ -41,7 +42,7 @@ export default function Login() {
          values,{withCredentials:true}
        );
        toast.success("Logged In Successfully");
-       saveUser(res.data.user)
+       dispatch(saveUser(res.data.user));
        navigate("/dashboard");
      } catch (error) {
        toast.error(error?.response?.data?.message);
