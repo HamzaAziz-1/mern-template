@@ -12,9 +12,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../utils/config";
+import { registerUser } from "../helpers/api";
 
 const defaultTheme = createTheme();
 
@@ -34,7 +33,7 @@ export default function Register() {
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); 
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const validateForm = () => {
@@ -71,7 +70,7 @@ export default function Register() {
 
     if (validateForm()) {
       try {
-        const res = await axios.post(`${BASE_URL}/auth/register`, values);
+        const res = await registerUser(values);
         toast.success("User registered successfully");
         navigate("/login");
       } catch (error) {

@@ -1,15 +1,12 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../../utils/config";
+import { logoutUser } from "../../helpers/api";
 
 export const logoutUserAsync = createAsyncThunk(
   "user/logoutUserAsync",
   async (_, { dispatch }) => {
     try {
-      await axios.delete(`${BASE_URL}/auth/logout`, {
-        withCredentials: true,
-      });
+      await logoutUser();
       dispatch(updateUser(null));
       toast.success("Logout Successfully");
     } catch (error) {
@@ -32,23 +29,11 @@ const userSlice = createSlice({
     updateUser: (state, action) => {
       state.user = action.payload;
     },
-    logoutUser: async (state) => {
-      try {
-        await axios.delete(`${BASE_URL}/auth/logout`, {
-          withCredentials: true,
-        });
-        state.user = null;
-        state.isLoading = false;
-        toast.success("Logout Successfully");
-      } catch (error) {
-        state.isLoading = false;
-        toast.error(error?.response?.data?.msg);
-      }
-    },
+    
   },
 });
 
-export const { saveUser, logoutUser, updateUser } = userSlice.actions;
+export const { saveUser, updateUser } = userSlice.actions;
 export const selectUser = (state) => state.user.user;
 export const selectIsLoading = (state) => state.isLoading;
 

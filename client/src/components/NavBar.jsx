@@ -17,6 +17,7 @@ export default function NavBar() {
 
   const handleLogout = () => {
     dispatch(logoutUserAsync());
+    navigate('/')
   };
 
   return (

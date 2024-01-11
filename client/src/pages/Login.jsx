@@ -14,11 +14,10 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../utils/config";
 import { useDispatch } from "react-redux";
 import { saveUser } from "../features/user/userSlice";
+import { loginUser } from "../helpers/api";
 
 const defaultTheme = createTheme();
 
@@ -68,11 +67,9 @@ export default function Login() {
     event.preventDefault();
     if (validateForm()) {
       try {
-        const res = await axios.post(`${BASE_URL}/auth/login`, values, {
-          withCredentials: true,
-        });
+        const res = await loginUser(values);
         toast.success("Logged In Successfully");
-        dispatch(saveUser(res.data.user));
+        dispatch(saveUser(res.user));
         navigate("/dashboard");
       } catch (error) {
         toast.error(error?.response?.data?.message);
