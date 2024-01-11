@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-//middleware
+//middlewares
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 
+//http server
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
