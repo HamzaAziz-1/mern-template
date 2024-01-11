@@ -4,12 +4,17 @@ const {
   hashPassword,
   attachCookiesToResponse,
 } = require("../utils/index");
+const { loginSchema, registerSchema } = require("../utils/validationSchema");
 
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    // Validate the request data
+    const validationResult = registerSchema.validate({ name,email, password });
+
+    if (validationResult.error) {
+      const errorMessage = validationResult.error.details[0].message;
+      return res.status(400).json({ message: errorMessage });
     }
     const hashedPassword = await hashPassword(password);
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
@@ -32,13 +37,14 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
-    // Validate input
-    if (!email || !password) {
-      throw new Error("Missing required fields");
-    }
+    // Validate the request data
+    const validationResult = loginSchema.validate({ email, password });
 
+    if (validationResult.error) {
+      const errorMessage = validationResult.error.details[0].message;
+      return res.status(400).json({ message: errorMessage });
+    }
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
