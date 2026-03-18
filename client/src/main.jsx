@@ -15,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           {/* <AppProvider> */}
             <App />
           {/* </AppProvider> */}
+          
         </PersistGate>
       </Provider>
     </BrowserRouter>
